@@ -1,4 +1,4 @@
-const { addonBuilder } = require("stremio-addon-sdk");
+const { addonBuilder, serveHTTP } = require("stremio-addon-sdk");
 
 const builder = new addonBuilder({
   id: "com.xperience.top10netflixcolombia",
@@ -99,6 +99,7 @@ builder.defineCatalogHandler((args) => {
 
 const addonInterface = builder.getInterface();
 
-module.exports = (req, res) => {
-  addonInterface.get(req, res);
+// Exportación compatible con funciones serverless de Vercel
+module.exports = function (req, res) {
+  serveHTTP(addonInterface, { req, res, cache: 0 });
 };
