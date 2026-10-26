@@ -1,25 +1,34 @@
-const { addonBuilder, serveHTTP } = require("stremio-addon-sdk");
+module.exports = (req, res) => {
+  // Configurar cabeceras para permitir CORS y formato JSON
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
-const builder = new addonBuilder({
-  id: "com.xperience.top10netflixcolombia",
-  version: "1.0.0",
-  name: "Top 10 Netflix Colombia",
-  description: "Catálogo con las películas del Top 10 de Netflix en Colombia",
-  resources: ["catalog"],
-  types: ["movie"],
-  catalogs: [
-    {
-      type: "movie",
-      id: "top10_netflix_colombia",
-      name: "Top 10 Netflix Colombia"
-    }
-  ],
-  idPrefixes: ["tt"]
-});
+  const url = req.url;
 
-builder.defineCatalogHandler((args) => {
-  if (args.type === "movie" && args.id === "top10_netflix_colombia") {
-    return Promise.resolve({
+  // 1. Si piden el manifest.json
+  if (url === '/manifest.json' || url === '/') {
+    const manifest = {
+      id: "com.xperience.top10netflixcolombia",
+      version: "1.0.0",
+      name: "Top 10 Netflix Colombia",
+      description: "Catálogo con las películas del Top 10 de Netflix en Colombia",
+      resources: ["catalog"],
+      types: ["movie"],
+      catalogs: [
+        {
+          type: "movie",
+          id: "top10_netflix_colombia",
+          name: "Top 10 Netflix Colombia"
+        }
+      ],
+      idPrefixes: ["tt"]
+    };
+    return res.status(200).json(manifest);
+  }
+
+  // 2. Si piden el catálogo de películas
+  if (url.includes('/catalog/movie/top10_netflix_colombia')) {
+    const catalogData = {
       metas: [
         {
           id: "tt30896300",
@@ -92,13 +101,13 @@ builder.defineCatalogHandler((args) => {
           description: "Top 10 en Netflix Colombia. Animación familiar."
         }
       ]
-    });
+    };
+    return res.status(200).json(catalogData);
   }
-  return Promise.resolve({ metas: [] });
-});
 
-const addonInterface = builder.getInterface();
-
+  // Si no coincide con ninguna ruta
+  return res.status(404).json({ error: "Ruta no encontrada" });
+};
 // Exportación compatible con funciones serverless de Vercel
 module.exports = function (req, res) {
   serveHTTP(addonInterface, { req, res, cache: 0 });
