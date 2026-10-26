@@ -1,0 +1,6 @@
+{
+  "routes": [
+    { "src": "/catalog/movie/top10_netflix_colombia.json", "dest": "/api/catalog.js" },
+    { "src": "/manifest.json", "dest": "/api/manifest.js" }
+  ]
+}

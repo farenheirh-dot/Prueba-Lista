@@ -1,0 +1,12 @@
+{
+  "name": "top10-netflix-colombia-addon",
+  "version": "1.0.0",
+  "description": "Add-on para Nuvio/Stremio con el Top 10 de Netflix Colombia",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js"
+  },
+  "dependencies": {
+    "stremio-addon-sdk": "^1.6.0"
+  }
+}
